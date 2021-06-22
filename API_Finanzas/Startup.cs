@@ -64,8 +64,8 @@ namespace API_Finanzas
                 });
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseInMemoryDatabase("Finanzas-api-in-memory");
-                //options.UseMySQL(Configuration.GetConnectionString("MySQLConnection"));
+                //options.UseInMemoryDatabase("Finanzas-api-in-memory");
+                options.UseMySQL(Configuration.GetConnectionString("MySQLConnection"));
             });
 
             //Unit of Work
