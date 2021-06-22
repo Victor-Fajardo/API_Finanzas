@@ -49,21 +49,19 @@ namespace API_Finanzas.Controllers
 
         // GET api/<OperationController>/5
         [SwaggerOperation(
-            Summary = "List all Operations by Id",
-            Description = "List of Operations for an Id",
-            OperationId = "ListAllOperationsById",
+            Summary = "List all Operations by PaymentLetterId",
+            Description = "List of Operations for a PaymentLetterId",
+            OperationId = "ListAllOperationsByPaymentLetterId",
             Tags = new[] { "Operations" }
         )]
-        [SwaggerResponse(200, "List Operations for an Id", typeof(IEnumerable<OperationResource>))]
+        [SwaggerResponse(200, "List Operations for a PaymentLetterId", typeof(IEnumerable<OperationResource>))]
         [HttpGet("id")]
-        public async Task<IActionResult> GetAllByIdAsync(int id)
+        public async Task<IEnumerable<OperationResource>> GetAllByPaymentLetterIdIdAsync(int paymentLetterId)
         {
-            var result = await _operationService.GetByIdAsync(id);
-
-            if (!result.Succes)
-                return BadRequest(result.Message);
-            var resource = _mapper.Map<Operation, OperationResource>(result.Resource);
-            return Ok(resource);
+            var operation = await _operationService.ListByPaymentLetterIdAsync(paymentLetterId);
+            var resources = _mapper
+                .Map<IEnumerable<Operation>, IEnumerable<OperationResource>>(operation);
+            return resources;
         }
 
         // POST api/<OperationController>
@@ -75,14 +73,14 @@ namespace API_Finanzas.Controllers
         )]
         [SwaggerResponse(200, "Operation was created", typeof(OperationResource))]
         [HttpPost("{id}")]
-        public async Task<IActionResult> PostAsync([FromBody] SaveOperationResource resource)
+        public async Task<IActionResult> PostAsync([FromBody] SaveOperationResource resource, int paymentLetterId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
             var operations = _mapper.Map<SaveOperationResource, Operation>(resource);
 
-            var result = await _operationService.SaveAsync(operations);
+            var result = await _operationService.SaveAsync(operations, paymentLetterId);
 
             if (!result.Succes)
                 return BadRequest(result.Message);

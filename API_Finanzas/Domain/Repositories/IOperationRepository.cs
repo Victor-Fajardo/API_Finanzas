@@ -9,6 +9,7 @@ namespace API_Finanzas.Domain.Repositories
     public interface IOperationRepository
     {
         Task<IEnumerable<Operation>> ListAsync();
+        Task<IEnumerable<Operation>> ListByPaymentLetterIdAsync(int paymentletterId);
         Task AddAsync(Operation operation);
         Task<Operation> FindById(int id);
         void Update(Operation operation);

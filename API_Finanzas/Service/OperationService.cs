@@ -13,11 +13,13 @@ namespace API_Finanzas.Service
     {
         private readonly IOperationRepository _operationRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IPaymentLetterRepository _paymentLetterRepository;
 
-        public OperationService(IOperationRepository operationRepository, IUnitOfWork unitOfWork)
+        public OperationService(IOperationRepository operationRepository, IUnitOfWork unitOfWork, IPaymentLetterRepository paymentLetterRepository)
         {
             _operationRepository = operationRepository;
             _unitOfWork = unitOfWork;
+            _paymentLetterRepository = paymentLetterRepository;
         }
 
         public  async Task<OperationResponse> DeleteAsync(int id)
@@ -50,8 +52,17 @@ namespace API_Finanzas.Service
             return await _operationRepository.ListAsync();
         }
 
-        public async Task<OperationResponse> SaveAsync(Operation operation)
+        public async Task<IEnumerable<Operation>> ListByPaymentLetterIdAsync(int paymentLetterId)
         {
+            return await _operationRepository.ListByPaymentLetterIdAsync(paymentLetterId);
+        }
+
+        public async Task<OperationResponse> SaveAsync(Operation operation, int paymentLetterId)
+        {
+            var existingPaymentLetter = await _paymentLetterRepository.FindById(paymentLetterId);
+            if (existingPaymentLetter == null)
+                return new OperationResponse("Payment Letter not found");
+            operation.PaymentLetter = existingPaymentLetter;
             try
             {
                 await _operationRepository.AddAsync(operation);

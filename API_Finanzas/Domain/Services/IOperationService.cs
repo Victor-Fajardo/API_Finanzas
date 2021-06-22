@@ -10,8 +10,9 @@ namespace API_Finanzas.Domain.Services
     public interface IOperationService
     {
         Task<IEnumerable<Operation>> ListAsync();
+        Task<IEnumerable<Operation>> ListByPaymentLetterIdAsync(int paymentLetterId);
         Task<OperationResponse> GetByIdAsync(int id);
-        Task<OperationResponse> SaveAsync(Operation operation);
+        Task<OperationResponse> SaveAsync(Operation operation, int paymentLetterId);
         Task<OperationResponse> UpdateAsync(int id, Operation operation);
         Task<OperationResponse> DeleteAsync(int id);
     }

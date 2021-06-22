@@ -49,21 +49,19 @@ namespace API_Finanzas.Controllers
 
         // GET api/<PaymentLetterController>/5
         [SwaggerOperation(
-            Summary = "List all Payment Letters by Id",
-            Description = "List of Payment Letters for an Id",
-            OperationId = "ListAllPaymentLettersById",
+            Summary = "List all Payment Letters by UserId",
+            Description = "List of Payment Letters for an UserId",
+            OperationId = "ListAllPaymentLettersByUserId",
             Tags = new[] { "Payment Letters" }
         )]
-        [SwaggerResponse(200, "List Payment Letters for an Id", typeof(IEnumerable<PaymentLetterResource>))]
+        [SwaggerResponse(200, "List Payment Letters for an UserId", typeof(IEnumerable<PaymentLetterResource>))]
         [HttpGet("id")]
-        public async Task<IActionResult> GetAllByIdAsync(int id)
+        public async Task<IEnumerable<PaymentLetterResource>> GetAllByUserIdAsync(int userId)
         {
-            var result = await _paymentLetterService.GetByIdAsync(id);
-
-            if (!result.Succes)
-                return BadRequest(result.Message);
-            var resource = _mapper.Map<PaymentLetter, PaymentLetterResource>(result.Resource);
-            return Ok(resource);
+            var paymentLetter = await _paymentLetterService.ListByUserIdAsync(userId);
+            var resources = _mapper
+                .Map<IEnumerable<PaymentLetter>, IEnumerable<PaymentLetterResource>>(paymentLetter);
+            return resources;
         }
 
         // POST api/<PaymentLetterController>
@@ -75,14 +73,14 @@ namespace API_Finanzas.Controllers
         )]
         [SwaggerResponse(200, "Payment Letter was created", typeof(PaymentLetterResource))]
         [HttpPost("{id}")]
-        public async Task<IActionResult> PostAsync([FromBody] SavePaymentLetterResource resource)
+        public async Task<IActionResult> PostAsync([FromBody] SavePaymentLetterResource resource, int userId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
             var paymentLetter = _mapper.Map<SavePaymentLetterResource, PaymentLetter>(resource);
 
-            var result = await _paymentLetterService.SaveAsync(paymentLetter);
+            var result = await _paymentLetterService.SaveAsync(paymentLetter, userId);
 
             if (!result.Succes)
                 return BadRequest(result.Message);

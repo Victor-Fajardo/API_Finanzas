@@ -14,5 +14,6 @@ namespace API_Finanzas.Resource
         public float OutputValue { get; set; }
         public float Flow { get; set; }
         public float TCEA { get; set; }
+        public PaymentLetterResource PaymentLetter { get; set; }
     }
 }

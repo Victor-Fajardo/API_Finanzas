@@ -9,6 +9,7 @@ namespace API_Finanzas.Domain.Repositories
     public interface IPaymentLetterRepository
     {
         Task<IEnumerable<PaymentLetter>> ListAsync();
+        Task<IEnumerable<PaymentLetter>> ListByUserId(int userId);
         Task AddAsync(PaymentLetter paymentLetter);
         Task<PaymentLetter> FindById(int id);
         void Update(PaymentLetter paymentLetter);

@@ -9,8 +9,6 @@ namespace API_Finanzas.Resource.Saves
     public class SavePaymentLetterResource
     {
         [Required]
-        public int RUC { get; set; }
-        [Required]
         public string Currency { get; set; }
         [Required]
         public float Amount { get; set; }

@@ -18,5 +18,6 @@ namespace API_Finanzas.Domain.Models
         public int RUC { get; set; }
         public string Email { get; set; }
         public bool Connected { get; set; }
+        public List<PaymentLetter> PaymentLetters { get; set; }
     }
 }

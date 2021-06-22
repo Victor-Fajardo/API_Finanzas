@@ -30,6 +30,11 @@ namespace API_Finanzas.Persistence.Repositories
             return await _context.Operations.ToListAsync();
         }
 
+        public async Task<IEnumerable<Operation>> ListByPaymentLetterIdAsync(int paymentletterId)
+        {
+            return await _context.Operations.Where(b => b.PaymentLetterId == paymentletterId).ToListAsync();
+        }
+
         public void Remove(Operation operation)
         {
             _context.Operations.Remove(operation);

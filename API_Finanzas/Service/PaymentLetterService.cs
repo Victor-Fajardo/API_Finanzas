@@ -13,11 +13,13 @@ namespace API_Finanzas.Service
     {
         private readonly IPaymentLetterRepository _paymentLetterRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IUserRepository _userRepository;
 
-        public PaymentLetterService(IPaymentLetterRepository paymentLetterRepository, IUnitOfWork unitOfWork)
+        public PaymentLetterService(IPaymentLetterRepository paymentLetterRepository, IUnitOfWork unitOfWork, IUserRepository userRepository)
         {
             _paymentLetterRepository = paymentLetterRepository;
             _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
         }
 
         public async Task<PaymentLetterResponse> DeleteAsync(int id)
@@ -50,8 +52,17 @@ namespace API_Finanzas.Service
             return await _paymentLetterRepository.ListAsync();
         }
 
-        public async Task<PaymentLetterResponse> SaveAsync(PaymentLetter paymentLetter)
+        public async Task<IEnumerable<PaymentLetter>> ListByUserIdAsync(int userId)
         {
+            return await _paymentLetterRepository.ListByUserId(userId);
+        }
+
+        public async Task<PaymentLetterResponse> SaveAsync(PaymentLetter paymentLetter, int userId)
+        {
+            var existingUser = await _userRepository.FindById(userId);
+            if (existingUser == null)
+                return new PaymentLetterResponse("User not found");
+            paymentLetter.User = existingUser;
             try
             {
                 await _paymentLetterRepository.AddAsync(paymentLetter);
@@ -69,7 +80,6 @@ namespace API_Finanzas.Service
             var existingPaymentLetter = await _paymentLetterRepository.FindById(id);
             if (existingPaymentLetter == null)
                 return new PaymentLetterResponse("Payment Letter not found");
-            existingPaymentLetter.RUC = paymentLetter.RUC;
             existingPaymentLetter.Currency = paymentLetter.Currency;
             existingPaymentLetter.Amount = paymentLetter.Amount;
             existingPaymentLetter.EmisisonDate = paymentLetter.EmisisonDate;
